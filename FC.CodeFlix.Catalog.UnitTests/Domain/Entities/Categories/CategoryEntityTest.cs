@@ -1,5 +1,6 @@
 ﻿using FC.CodeFlix.Catalog.Domain.Entities.Categories;
 using FC.CodeFlix.Catalog.Domain.Exceptions;
+using FluentAssertions;
 using System;
 using System.Linq;
 using Xunit;
@@ -24,12 +25,12 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
             var category = new CategoryEntity(values.Name, values.Description, values.IsActive);
 
             //Assert
-            Assert.NotNull(category);
-            Assert.Equal(values.Name, category.Name);
-            Assert.Equal(values.Description, category.Description);
-            Assert.NotEqual(default, category.Id);
-            Assert.NotEqual(default, category.CreatedAt);
-            Assert.True(category.IsActive);
+            category.Should().NotBeNull();            
+            category.Name.Should().Be(values.Name); 
+            category.Description.Should().Be(values.Description);
+            category.Id.Should().NotBeEmpty();
+            category.CreatedAt.Should().NotBe(default);
+            category.IsActive.Should().BeTrue();          
         }
 
         [Theory(DisplayName = nameof(InstantiateWithActive))]
@@ -50,12 +51,12 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
             var category = new CategoryEntity(values.Name, values.Description, values.IsActive);
 
             //Assert
-            Assert.NotNull(category);
-            Assert.Equal(values.Name, category.Name);
-            Assert.Equal(values.Description, category.Description);            
-            Assert.NotEqual(default, category.Id);
-            Assert.NotEqual(default, category.CreatedAt);
-            Assert.Equal(values.IsActive, category.IsActive);
+            category.Should().NotBeNull();
+            category.Name.Should().Be(values.Name);
+            category.Description.Should().Be(values.Description);
+            category.Id.Should().NotBeEmpty();
+            category.CreatedAt.Should().NotBe(default);
+            category.IsActive.Should().Be(values.IsActive);
         }
 
         [Theory(DisplayName = nameof(InstantiateErrorWhenNameIsEmpty))]
@@ -77,9 +78,9 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
             var category = () => new CategoryEntity(values.Name!, values.Description, values.IsActive);
 
             //Assert
-            var exception =  Assert.Throws<EntityValidationException>(category);
-
-            Assert.Equal("Name should not be empty or null", exception.Message);
+            category.Should()
+                .Throw<EntityValidationException>()
+                .WithMessage("Name should not be empty or null");
         }
 
         [Fact(DisplayName = nameof(InstantiateErrorWhenNameDescriptionIsNull))]
@@ -97,9 +98,9 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
             var category = () => new CategoryEntity(values.Name, null!, values.IsActive);
 
             //Assert
-            var exception = Assert.Throws<EntityValidationException>(category);
-
-            Assert.Equal("Description should not be null", exception.Message);
+            category.Should()
+                .Throw<EntityValidationException>()
+                .WithMessage("Description should not be null");
         }
 
         [Theory(DisplayName = nameof(InstantiateErrorWhenNameIsLessThan3Characters))]
@@ -120,9 +121,9 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
             var category = () => new CategoryEntity(values.Name!, values.Description, values.IsActive);
 
             //Assert
-            var exception = Assert.Throws<EntityValidationException>(category);
-
-            Assert.Equal("Name should be at leats 3 characters long", exception.Message);
+            category.Should()
+               .Throw<EntityValidationException>()
+               .WithMessage("Name should be at leats 3 characters long");
         }
 
         [Fact(DisplayName = nameof(InstantiateErrorWhenNameIsGreaterThan255Characters))]
@@ -143,9 +144,9 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
             var category = () => new CategoryEntity(values.Name, values.Description, values.IsActive);
 
             //Assert
-            var exception = Assert.Throws<EntityValidationException>(category);
-
-            Assert.Equal("Name should be less or equal 255 characters long", exception.Message);
+            category.Should()
+              .Throw<EntityValidationException>()
+              .WithMessage("Name should be less or equal 255 characters long");
         }
 
         [Fact(DisplayName = nameof(InstantiateErrorWhenDescriptionIsGreaterThan10000Characters))]
@@ -166,9 +167,9 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
             var category = () => new CategoryEntity(values.Name, values.Description, values.IsActive);
 
             //Assert
-            var exception = Assert.Throws<EntityValidationException>(category);
-
-            Assert.Equal("Description should be less or equal 10.000 characters long", exception.Message);
+            category.Should()
+              .Throw<EntityValidationException>()
+              .WithMessage("Description should be less or equal 10.000 characters long");
         }
 
         [Fact(DisplayName = nameof(Activate))]
@@ -191,8 +192,8 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
             category.Activate();
 
             //Assert
-            Assert.False(oldIsActive);
-            Assert.True(category.IsActive);
+            oldIsActive.Should().BeFalse();
+            category.IsActive.Should().BeTrue();
         }
 
         [Fact(DisplayName = nameof(Deactivate))]
@@ -215,8 +216,8 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
             category.Deactivate();
 
             //Assert
-            Assert.True(oldIsActive);
-            Assert.False(category.IsActive);
+            oldIsActive.Should().BeTrue();
+            category.IsActive.Should().BeFalse();
         }
 
         [Fact(DisplayName = nameof(Update))]
@@ -231,13 +232,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
                 IsActive = true
             };            
 
-            var category = new CategoryEntity(values.Name, values.Description, values.IsActive);
-
-            var newValues = new
-            {
-                Name = "New Category Name",
-                Description = "New Category Description"
-            };
+            var category = new CategoryEntity(values.Name, values.Description, values.IsActive);           
 
             var currentValues = new
             {
@@ -246,24 +241,29 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
                 CreatedAt = category.CreatedAt
             };
 
+            var newValues = new
+            {
+                Name = "New Category Name",
+                Description = "New Category Description"
+            };
+
             //Act
             category.Update(newValues.Name, newValues.Description);
 
             //Assert
-            Assert.Equal(newValues.Name, category.Name);
-            Assert.Equal(newValues.Description, category.Description);
-            Assert.Equal(currentValues.Id, category.Id);
-            Assert.Equal(currentValues.IsActive, category.IsActive);
-            Assert.Equal(currentValues.CreatedAt, category.CreatedAt);
-        }
+            category.Name.Should().Be(newValues.Name);
+            category.Description.Should().Be(newValues.Description);
+            category.Id.Should().Be(currentValues.Id);
+            category.IsActive.Should().Be(currentValues.IsActive);
+            category.CreatedAt.Should().Be(currentValues.CreatedAt);        }
 
         [Theory(DisplayName = nameof(UpdateErrorWhenAnyParameterIsInvalid))]
         [Trait("Domain", "Category - Aggregates")]
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        //Teste feito somente com o parametro Name apenas para garantir
-        //que o Update() está chamando o Validate() na Entidade.
+        //Teste feito apenas com o parâmetro Name para garantir que
+        //o Update() está chamando o Validate() na Entidade.
         public void UpdateErrorWhenAnyParameterIsInvalid(string? name)
         {
             //Arrange
@@ -280,9 +280,9 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
             var action = () => category.Update(name!, values.Description);
 
             //Assert
-            var exception = Assert.Throws<EntityValidationException>(action);
-
-            Assert.Equal("Name should not be empty or null", exception.Message);
+            action.Should()
+              .Throw<EntityValidationException>()
+              .WithMessage("Name should not be empty or null");
         }
     }
 }
