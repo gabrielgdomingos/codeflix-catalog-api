@@ -7,8 +7,17 @@ using Xunit;
 
 namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
 {
+    [Collection(nameof(CategoryEntityTestFixture))]
     public class CategoryEntityTest
     {
+        //Não estou usando a Fixture para criar os objetos dos testes
+        private readonly CategoryEntityTestFixture _categoryEntityTestFixture;
+
+        public CategoryEntityTest(CategoryEntityTestFixture categoryEntityTestFixture)
+        {
+            _categoryEntityTestFixture = categoryEntityTestFixture;            
+        }
+
         [Fact(DisplayName = nameof(Instantiate))]
         [Trait("Domain", "Category - Aggregates")]
         public void Instantiate()
@@ -83,9 +92,9 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
                 .WithMessage("Name should not be empty or null");
         }
 
-        [Fact(DisplayName = nameof(InstantiateErrorWhenNameDescriptionIsNull))]
+        [Fact(DisplayName = nameof(InstantiateErrorWhenDescriptionIsNull))]
         [Trait("Domain", "Category - Aggregates")]
-        public void InstantiateErrorWhenNameDescriptionIsNull()
+        public void InstantiateErrorWhenDescriptionIsNull()
         {
             //Arrange
             var values = new
