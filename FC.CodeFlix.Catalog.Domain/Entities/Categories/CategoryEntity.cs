@@ -1,11 +1,11 @@
 ﻿using FC.CodeFlix.Catalog.Domain.Exceptions;
+using FC.CodeFlix.Catalog.Domain.SeedWork;
 
 namespace FC.CodeFlix.Catalog.Domain.Entities.Categories
 {
-    public class CategoryEntity
+    public class CategoryEntity 
+        : AggregateRoot
     {
-        public Guid Id { get; private set; }        
-
         public string Name { get; private set; }
 
         public string Description { get; private set; }        
@@ -14,17 +14,18 @@ namespace FC.CodeFlix.Catalog.Domain.Entities.Categories
 
         public DateTime CreatedAt { get; private set; }
 
-        public CategoryEntity(string name, string description, bool isActive = true)
+        public CategoryEntity(string name, string description, bool isActive)
+            : base()
         {
-            Id = Guid.NewGuid();
             Name = name;
             Description = description;
             IsActive = isActive;
             CreatedAt = DateTime.Now;
+
             validate();
         }
 
-        public void validate()
+        private void validate()
         {
             if (string.IsNullOrWhiteSpace(Name))
                 throw new EntityValidationException($"{nameof(Name)} should not be empty or null");
@@ -40,6 +41,25 @@ namespace FC.CodeFlix.Catalog.Domain.Entities.Categories
 
             if (Description.Length > 10000)
                 throw new EntityValidationException($"{nameof(Description)} should be less or equal 10.000 characters long");
+        }
+
+        public void Activate()
+        {
+            IsActive = true;
+            validate();
+        }
+
+        public void Deactivate()
+        {
+            IsActive = false;
+            validate();
+        }
+
+        public void Update(string name, string description)
+        {
+            Name = name;
+            Description = description;
+            validate();
         }
     }
 }
