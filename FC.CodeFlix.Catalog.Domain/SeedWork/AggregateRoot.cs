@@ -1,8 +1,9 @@
 ﻿namespace FC.CodeFlix.Catalog.Domain.SeedWork
 {
     public abstract class AggregateRoot 
-        : EntityBase
+        : BaseEntity
     {
-        protected AggregateRoot() : base() { }
+        protected AggregateRoot() 
+            : base() { }
     }
 }
