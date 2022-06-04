@@ -1,5 +1,6 @@
 ﻿using FC.CodeFlix.Catalog.Application.UseCases.Categories.CreateCategory;
 using FC.CodeFlix.Catalog.Domain.Entities.Categories;
+using FC.CodeFlix.Catalog.Domain.Exceptions;
 using FluentAssertions;
 using Moq;
 using System.Threading;
@@ -15,9 +16,9 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.CreateCa
         public CreateCategoryUseCaseTest(CreateCategoryUseCaseTestFixture fixture)
             => _fixture = fixture;
 
-        [Fact(DisplayName = nameof(CreateCategory))]
+        [Fact(DisplayName = nameof(HandleSuccess))]
         [Trait("Application", "CreateCategory - Use Cases")]
-        public async void CreateCategory()
+        public async void HandleSuccess()
         {
             //Arrange
             var unitOfWorkMock = _fixture.GetUnitOfWorkMock();
@@ -56,6 +57,35 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.CreateCa
                 ),
                 Times.Once
             );
+        }
+
+        [Theory(DisplayName = nameof(HandleErrorCantInstantiateAggregate))]
+        [Trait("Application", "CreateCategory - Use Cases")]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public void HandleErrorCantInstantiateAggregate(string name)
+        {
+            //Arrange            
+            var useCase = new CreateCategoryUseCase(
+                _fixture.GetUnitOfWorkMock().Object,
+                _fixture.GetRepositoryMock().Object
+            );
+
+            var input = new CreateCategoryInput(
+                name,
+                _fixture.GetValidCategoryDescription(),
+                _fixture.GetRandomBoolean()
+            );
+
+            //Act
+            var action = async ()
+                => await useCase.HandleAsync(input, CancellationToken.None);
+
+            //Assert
+            action.Should()
+              .ThrowAsync<EntityValidationException>()
+              .WithMessage("Name should not be null or empty");
         }
     }
 }
