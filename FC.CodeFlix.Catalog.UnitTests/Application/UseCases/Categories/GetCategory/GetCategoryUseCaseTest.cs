@@ -28,7 +28,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.GetCateg
 
             repositoryMock.Setup(
                 repository => repository.GetAsync(
-                    It.IsAny<Guid>(),
+                    category.Id,
                     It.IsAny<CancellationToken>()
                 )
             ).ReturnsAsync(category);
@@ -50,7 +50,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.GetCateg
 
             repositoryMock.Verify(
                 repository => repository.GetAsync(
-                    It.IsAny<Guid>(),
+                    category.Id,
                     It.IsAny<CancellationToken>()
                 ),
                 Times.Once
@@ -68,7 +68,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.GetCateg
 
             repositoryMock.Setup(
                repository => repository.GetAsync(
-                   It.IsAny<Guid>(),
+                   categoryId,
                    It.IsAny<CancellationToken>()
                )
            ).ReturnsAsync((CategoryEntity)null!);
@@ -88,7 +88,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.GetCateg
 
             repositoryMock.Verify(
                 repository => repository.GetAsync(
-                    It.IsAny<Guid>(),
+                    categoryId,
                     It.IsAny<CancellationToken>()
                 ),
                 Times.Once

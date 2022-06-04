@@ -17,14 +17,12 @@ namespace FC.CodeFlix.Catalog.Application.UseCases.Categories.CreateCategory
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<CreateCategoryOutput> Handle(
-            CreateCategoryInput input,
-            CancellationToken cancellationToken)
+        public async Task<CreateCategoryOutput> Handle(CreateCategoryInput request, CancellationToken cancellationToken)
         {
             var category = new CategoryEntity(
-                input.Name,
-                input.Description,
-                input.IsActive
+                request.Name,
+                request.Description,
+                request.IsActive
             );
 
             await _categoryRepository.AddAsync(category, cancellationToken);
