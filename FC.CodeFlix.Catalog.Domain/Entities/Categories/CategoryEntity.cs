@@ -33,6 +33,7 @@ namespace FC.CodeFlix.Catalog.Domain.Entities.Categories
             DomainValidation.NotNullOrEmpty(nameof(Name), Name);
             DomainValidation.MinLength(nameof(Name), Name, 3);
             DomainValidation.MaxLength(nameof(Name), Name, 255);
+
             DomainValidation.NotNull(nameof(Description), Description);
             DomainValidation.MaxLength(nameof(Description), Description, 10000);
         }
