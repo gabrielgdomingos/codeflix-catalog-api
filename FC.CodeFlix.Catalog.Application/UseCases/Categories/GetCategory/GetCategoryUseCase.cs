@@ -1,4 +1,5 @@
-﻿using FC.CodeFlix.Catalog.Domain.Repositories;
+﻿using FC.CodeFlix.Catalog.Application.Exceptions;
+using FC.CodeFlix.Catalog.Domain.Repositories;
 using MediatR;
 
 namespace FC.CodeFlix.Catalog.Application.UseCases.Categories.GetCategory
@@ -18,7 +19,9 @@ namespace FC.CodeFlix.Catalog.Application.UseCases.Categories.GetCategory
                 cancellationToken
             );
 
-            //TODO: Fazer o tratamento quando não encontrar a entidade
+            if (category == null)
+                throw new NotFoundException($"Category '{request.Id}' not found");
+
             return GetCategoryOutput.FromEntity(category);
         }
     }

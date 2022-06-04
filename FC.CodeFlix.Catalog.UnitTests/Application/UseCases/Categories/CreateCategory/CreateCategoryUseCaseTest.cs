@@ -64,7 +64,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.CreateCa
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public void HandleErrorCantInstantiateAggregate(string name)
+        public async void HandleErrorCantInstantiateAggregate(string name)
         {
             //Arrange            
             var useCase = new CreateCategoryUseCase(
@@ -83,7 +83,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.CreateCa
                 => await useCase.Handle(input, CancellationToken.None);
 
             //Assert
-            action.Should()
+            await action.Should()
               .ThrowAsync<EntityValidationException>()
               .WithMessage("Name should not be null or empty");
         }
