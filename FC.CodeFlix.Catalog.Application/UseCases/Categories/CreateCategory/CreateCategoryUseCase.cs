@@ -1,10 +1,12 @@
 ﻿using FC.CodeFlix.Catalog.Application.Common;
 using FC.CodeFlix.Catalog.Domain.Entities.Categories;
 using FC.CodeFlix.Catalog.Domain.Repositories;
+using MediatR;
 
 namespace FC.CodeFlix.Catalog.Application.UseCases.Categories.CreateCategory
 {
     public class CreateCategoryUseCase
+        : IRequestHandler<CreateCategoryInput, CreateCategoryOutput>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICategoryRepository _categoryRepository;
@@ -15,7 +17,7 @@ namespace FC.CodeFlix.Catalog.Application.UseCases.Categories.CreateCategory
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<CreateCategoryOutput> HandleAsync(
+        public async Task<CreateCategoryOutput> Handle(
             CreateCategoryInput input,
             CancellationToken cancellationToken)
         {

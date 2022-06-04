@@ -33,7 +33,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.CreateCa
             var input = _fixture.GetValidInput();
 
             //Act
-            var output = await useCase.HandleAsync(input, CancellationToken.None);
+            var output = await useCase.Handle(input, CancellationToken.None);
 
             //Assert
             output.Should().NotBeNull();
@@ -80,7 +80,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.CreateCa
 
             //Act
             var action = async ()
-                => await useCase.HandleAsync(input, CancellationToken.None);
+                => await useCase.Handle(input, CancellationToken.None);
 
             //Assert
             action.Should()
