@@ -1,4 +1,5 @@
-﻿//using FC.CodeFlix.Catalog.Domain.Entities.Categories;
+﻿//using FC.CodeFlix.Catalog.Application.Common;
+//using FC.CodeFlix.Catalog.Domain.Entities.Categories;
 //using FC.CodeFlix.Catalog.Domain.Repositories;
 //using Moq;
 //using System.Threading;
@@ -40,7 +41,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.CreateCa
             //output.IsActive.Should().BeTrue();
 
             //repositoryMock.Verify(
-            //    repository => repository.Add(
+            //    repository => repository.AddAsync(
             //        It.IsAny<CategoryEntity>(),
             //        It.IsAny<CancellationToken>()
             //    ),
@@ -48,7 +49,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.CreateCa
             //);
 
             //unitOfWorkMock.Verify(
-            //    unitOfWork => unitOfWork.Commit(
+            //    unitOfWork => unitOfWork.CommitAsync(
             //        It.IsAny<CancellationToken>()
             //    ),
             //    Times.Once

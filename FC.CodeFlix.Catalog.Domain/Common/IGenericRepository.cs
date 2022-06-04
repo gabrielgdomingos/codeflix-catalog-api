@@ -3,6 +3,6 @@
     public interface IGenericRepository<TAggregate>
         : IRepository
     {
-        public Task Add(TAggregate aggregate, CancellationToken cancellationToken);
+        public Task AddAsync(TAggregate aggregate, CancellationToken cancellationToken);
     }
 }
