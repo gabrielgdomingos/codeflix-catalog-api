@@ -4,7 +4,7 @@ using Xunit;
 namespace FC.CodeFlix.Catalog.UnitTests.Domain.Validations
 {
     public class DomainValidationTestFixture
-        : BaseTestFixture
+        : TestFixtureBase
     {
         public DomainValidationTestFixture()
            : base() { }

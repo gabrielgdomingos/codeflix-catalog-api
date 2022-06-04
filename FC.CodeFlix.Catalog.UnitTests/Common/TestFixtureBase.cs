@@ -2,11 +2,11 @@
 
 namespace FC.CodeFlix.Catalog.UnitTests.Common
 {
-    public abstract class BaseTestFixture
+    public abstract class TestFixtureBase
     {
         public Faker Faker { get; set; }
 
-        protected BaseTestFixture() 
+        protected TestFixtureBase()
             => Faker = new Faker("pt_BR");
     }
 }

@@ -5,7 +5,7 @@ using Xunit;
 namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
 {
     public class CategoryEntityTestFixture 
-        : BaseTestFixture
+        : TestFixtureBase
     {
         public CategoryEntityTestFixture()
             : base() { }
