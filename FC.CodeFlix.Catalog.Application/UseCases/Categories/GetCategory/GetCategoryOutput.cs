@@ -1,8 +1,8 @@
 ﻿using FC.CodeFlix.Catalog.Domain.Entities.Categories;
 
-namespace FC.CodeFlix.Catalog.Application.UseCases.Categories.CreateCategory
+namespace FC.CodeFlix.Catalog.Application.UseCases.Categories.GetCategory
 {
-    public class CreateCategoryOutput
+    public class GetCategoryOutput
     {
         public Guid Id { get; protected set; }
 
@@ -14,7 +14,7 @@ namespace FC.CodeFlix.Catalog.Application.UseCases.Categories.CreateCategory
 
         public DateTime CreatedAt { get; private set; }
 
-        public CreateCategoryOutput(Guid id, string name, string description, bool isActive, DateTime createdAt)
+        public GetCategoryOutput(Guid id, string name, string description, bool isActive, DateTime createdAt)
         {
             Id = id;
             Name = name;
@@ -23,7 +23,7 @@ namespace FC.CodeFlix.Catalog.Application.UseCases.Categories.CreateCategory
             CreatedAt = createdAt;
         }
 
-        public static CreateCategoryOutput FromEntity(CategoryEntity category)
+        public static GetCategoryOutput FromEntity(CategoryEntity category)
             => new(
                 category.Id,
                 category.Name,
@@ -31,5 +31,6 @@ namespace FC.CodeFlix.Catalog.Application.UseCases.Categories.CreateCategory
                 category.IsActive,
                 category.CreatedAt
             );
+
     }
 }

@@ -4,5 +4,7 @@
         : IRepository
     {
         public Task AddAsync(TAggregate aggregate, CancellationToken cancellationToken);
+
+        public Task<TAggregate> GetAsync(Guid id, CancellationToken cancellationToken);
     }
 }

@@ -31,15 +31,7 @@ namespace FC.CodeFlix.Catalog.Application.UseCases.Categories.CreateCategory
 
             await _unitOfWork.CommitAsync(cancellationToken);
 
-            var output = new CreateCategoryOutput(
-                category.Id,
-                category.Name,
-                category.Description,
-                category.IsActive,
-                category.CreatedAt
-            );
-
-            return output;
+            return CreateCategoryOutput.FromEntity(category);
         }
     }
 }
