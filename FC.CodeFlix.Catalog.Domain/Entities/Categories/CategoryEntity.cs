@@ -1,5 +1,5 @@
 ﻿using FC.CodeFlix.Catalog.Domain.Common;
-using FC.CodeFlix.Catalog.Domain.Exceptions;
+using FC.CodeFlix.Catalog.Domain.Validations;
 
 namespace FC.CodeFlix.Catalog.Domain.Entities.Categories
 {
@@ -30,20 +30,11 @@ namespace FC.CodeFlix.Catalog.Domain.Entities.Categories
 
         private void validate()
         {
-            if (string.IsNullOrWhiteSpace(Name))
-                throw new EntityValidationException($"{nameof(Name)} should not be empty or null");
-
-            if (Name.Length < 3)
-                throw new EntityValidationException($"{nameof(Name)} should be at leats 3 characters long");
-
-            if (Name.Length > 255)
-                throw new EntityValidationException($"{nameof(Name)} should be less or equal 255 characters long");
-
-            if (Description is null)
-                throw new EntityValidationException($"{nameof(Description)} should not be null");
-
-            if (Description.Length > 10000)
-                throw new EntityValidationException($"{nameof(Description)} should be less or equal 10.000 characters long");
+            DomainValidation.NotNullOrEmpty(nameof(Name), Name);
+            DomainValidation.MinLength(nameof(Name), Name, 3);
+            DomainValidation.MaxLength(nameof(Name), Name, 255);
+            DomainValidation.NotNull(nameof(Description), Description);
+            DomainValidation.MaxLength(nameof(Description), Description, 10000);
         }
 
         public void Activate()

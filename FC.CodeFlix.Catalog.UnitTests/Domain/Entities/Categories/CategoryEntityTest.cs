@@ -70,7 +70,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
             //Assert
             category.Should()
                 .Throw<EntityValidationException>()
-                .WithMessage("Name should not be empty or null");
+                .WithMessage("Name should not be null or empty");
         }
 
         [Fact(DisplayName = nameof(InstantiateErrorWhenDescriptionIsNull))]
@@ -122,7 +122,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
             //Assert
             category.Should()
               .Throw<EntityValidationException>()
-              .WithMessage("Name should be less or equal 255 characters long");
+              .WithMessage("Name should be at most 255 characters long");
         }
 
         [Fact(DisplayName = nameof(InstantiateErrorWhenDescriptionIsGreaterThan10000Characters))]
@@ -140,7 +140,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
             //Assert
             category.Should()
               .Throw<EntityValidationException>()
-              .WithMessage("Description should be less or equal 10.000 characters long");
+              .WithMessage("Description should be at most 10000 characters long");
         }
 
         [Fact(DisplayName = nameof(Activate))]
@@ -228,7 +228,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
             //Assert
             action.Should()
               .Throw<EntityValidationException>()
-              .WithMessage("Name should not be empty or null");
+              .WithMessage("Name should not be null or empty");
         }
     }
 }
