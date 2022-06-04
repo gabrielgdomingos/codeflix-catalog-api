@@ -1,22 +1,22 @@
 ﻿using FC.CodeFlix.Catalog.Application.Common;
-using FC.CodeFlix.Catalog.Application.UseCases.Categories.CreateCategory;
+using FC.CodeFlix.Catalog.Domain.Entities.Categories;
 using FC.CodeFlix.Catalog.Domain.Repositories;
 using FC.CodeFlix.Catalog.UnitTests.Common;
 using Moq;
 using System;
 using Xunit;
 
-namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.CreateCategory
+namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.DeleteCategory
 {
-    [CollectionDefinition(nameof(CreateCategoryUseCaseTestFixture))]
+    [CollectionDefinition(nameof(DeleteCategoryUseCaseTestFixture))]
     public class CreateCategoryUseCaseTestFixtureCollection
-        : ICollectionFixture<CreateCategoryUseCaseTestFixture>
+       : ICollectionFixture<DeleteCategoryUseCaseTestFixture>
     { }
 
-    public class CreateCategoryUseCaseTestFixture
+    public class DeleteCategoryUseCaseTestFixture
         : TestFixtureBase
     {
-        public CreateCategoryUseCaseTestFixture()
+        public DeleteCategoryUseCaseTestFixture()
             : base() { }
 
         public string GetValidCategoryName()
@@ -45,12 +45,12 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.CreateCa
         public bool GetRandomBoolean()
             => new Random().NextDouble() < 0.5;
 
-        public CreateCategoryInput GetValidInput()
-            => new(
-                GetValidCategoryName(),
-                GetValidCategoryDescription(),
-                GetRandomBoolean()
-            );
+        public CategoryEntity GetValidCategory()
+           => new(
+               GetValidCategoryName(),
+               GetValidCategoryDescription(),
+               GetRandomBoolean()
+           );
 
         public Mock<ICategoryRepository> GetRepositoryMock()
             => new();

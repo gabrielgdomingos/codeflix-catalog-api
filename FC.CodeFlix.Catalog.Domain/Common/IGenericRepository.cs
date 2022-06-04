@@ -6,5 +6,7 @@
         public Task AddAsync(TAggregate aggregate, CancellationToken cancellationToken);
 
         public Task<TAggregate> GetAsync(Guid id, CancellationToken cancellationToken);
+
+        public Task DeleteAsync(TAggregate aggregate, CancellationToken cancellationToken);
     }
 }
