@@ -1,8 +1,6 @@
 ﻿using FC.CodeFlix.Catalog.Domain.Entities.Categories;
 using FC.CodeFlix.Catalog.Domain.Exceptions;
 using FluentAssertions;
-using System;
-using System.Linq;
 using Xunit;
 
 namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
@@ -13,31 +11,26 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
         //Não estou usando a Fixture para criar os objetos dos testes
         private readonly CategoryEntityTestFixture _categoryEntityTestFixture;
 
-        public CategoryEntityTest(CategoryEntityTestFixture categoryEntityTestFixture) 
+        public CategoryEntityTest(CategoryEntityTestFixture categoryEntityTestFixture)
             => _categoryEntityTestFixture = categoryEntityTestFixture;
 
         [Fact(DisplayName = nameof(Instantiate))]
         [Trait("Domain", "Category - Aggregates")]
         public void Instantiate()
         {
-            //Arrange
-            var values = new
-            {
-                Name = _categoryEntityTestFixture.GetValidCategoryName(),
-                Description = _categoryEntityTestFixture.GetValidCategoryDescription(),
-                IsActive = true
-            };
+            //Arrange           
+            var values = _categoryEntityTestFixture.GetValidCategory();
 
             //Act
-            var category = new CategoryEntity(values.Name, values.Description, values.IsActive);
+            var category = new CategoryEntity(values.Name, values.Description);
 
             //Assert
-            category.Should().NotBeNull();            
-            category.Name.Should().Be(values.Name); 
+            category.Should().NotBeNull();
+            category.Name.Should().Be(values.Name);
             category.Description.Should().Be(values.Description);
             category.Id.Should().NotBeEmpty();
             category.CreatedAt.Should().NotBe(default);
-            category.IsActive.Should().BeTrue();          
+            category.IsActive.Should().BeTrue();
         }
 
         [Theory(DisplayName = nameof(InstantiateWithActive))]
@@ -47,15 +40,10 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
         public void InstantiateWithActive(bool isActive)
         {
             //Arrange
-            var values = new
-            {
-                Name = _categoryEntityTestFixture.GetValidCategoryName(),
-                Description = _categoryEntityTestFixture.GetValidCategoryDescription(),
-                IsActive = isActive
-            };
+            var values = _categoryEntityTestFixture.GetValidCategory();
 
             //Act
-            var category = new CategoryEntity(values.Name, values.Description, values.IsActive);
+            var category = new CategoryEntity(values.Name, values.Description, isActive);
 
             //Assert
             category.Should().NotBeNull();
@@ -63,7 +51,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
             category.Description.Should().Be(values.Description);
             category.Id.Should().NotBeEmpty();
             category.CreatedAt.Should().NotBe(default);
-            category.IsActive.Should().Be(values.IsActive);
+            category.IsActive.Should().Be(isActive);
         }
 
         [Theory(DisplayName = nameof(InstantiateErrorWhenNameIsEmpty))]
@@ -74,15 +62,10 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
         public void InstantiateErrorWhenNameIsEmpty(string? name)
         {
             //Arrange
-            var values = new
-            {
-                Name = name,
-                Description = _categoryEntityTestFixture.GetValidCategoryDescription(),
-                IsActive = true
-            };
+            var values = _categoryEntityTestFixture.GetValidCategory();
 
             //Act
-            var category = () => new CategoryEntity(values.Name!, values.Description, values.IsActive);
+            var category = () => new CategoryEntity(name!, values.Description, values.IsActive);
 
             //Assert
             category.Should()
@@ -95,11 +78,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
         public void InstantiateErrorWhenDescriptionIsNull()
         {
             //Arrange
-            var values = new
-            {
-                Name = _categoryEntityTestFixture.GetValidCategoryName(),
-                IsActive = true
-            };
+            var values = _categoryEntityTestFixture.GetValidCategory();
 
             //Act
             var category = () => new CategoryEntity(values.Name, null!, values.IsActive);
@@ -117,15 +96,10 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
         public void InstantiateErrorWhenNameIsLessThan3Characters(string name)
         {
             //Arrange
-            var values = new
-            {
-                Name = name,
-                Description = _categoryEntityTestFixture.GetValidCategoryDescription(),
-                IsActive = true
-            };
+            var values = _categoryEntityTestFixture.GetValidCategory();
 
             //Act
-            var category = () => new CategoryEntity(values.Name!, values.Description, values.IsActive);
+            var category = () => new CategoryEntity(name, values.Description, values.IsActive);
 
             //Assert
             category.Should()
@@ -137,18 +111,13 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
         [Trait("Domain", "Category - Aggregates")]
         public void InstantiateErrorWhenNameIsGreaterThan255Characters()
         {
+            //Arrange
+            var values = _categoryEntityTestFixture.GetValidCategory();
+
             var invalidName = _categoryEntityTestFixture.Faker.Lorem.Letter(256);
 
-            //Arrange
-            var values = new
-            {
-                Name = invalidName,
-                Description = _categoryEntityTestFixture.GetValidCategoryDescription(),
-                IsActive = true
-            };
-
             //Act
-            var category = () => new CategoryEntity(values.Name, values.Description, values.IsActive);
+            var category = () => new CategoryEntity(invalidName, values.Description, values.IsActive);
 
             //Assert
             category.Should()
@@ -160,18 +129,13 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
         [Trait("Domain", "Category - Aggregates")]
         public void InstantiateErrorWhenDescriptionIsGreaterThan10000Characters()
         {
+            //Arrange
+            var values = _categoryEntityTestFixture.GetValidCategory();
+
             var invalidDescription = _categoryEntityTestFixture.Faker.Lorem.Letter(10001);
 
-            //Arrange
-            var values = new
-            {
-                Name = _categoryEntityTestFixture.GetValidCategoryName(),
-                Description = invalidDescription,
-                IsActive = true
-            };
-
             //Act
-            var category = () => new CategoryEntity(values.Name, values.Description, values.IsActive);
+            var category = () => new CategoryEntity(values.Name, invalidDescription, values.IsActive);
 
             //Assert
             category.Should()
@@ -184,14 +148,9 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
         public void Activate()
         {
             //Arrange
-            var values = new
-            {
-                Name = _categoryEntityTestFixture.GetValidCategoryName(),
-                Description = _categoryEntityTestFixture.GetValidCategoryDescription(),
-                IsActive = false
-            };
+            var values = _categoryEntityTestFixture.GetValidCategory();
 
-            var category = new CategoryEntity(values.Name, values.Description, values.IsActive);
+            var category = new CategoryEntity(values.Name, values.Description, false);
 
             var oldIsActive = category.IsActive;
 
@@ -208,14 +167,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
         public void Deactivate()
         {
             //Arrange
-            var values = new
-            {
-                Name = _categoryEntityTestFixture.GetValidCategoryName(),
-                Description = _categoryEntityTestFixture.GetValidCategoryDescription(),
-                IsActive = true
-            };
-
-            var category = new CategoryEntity(values.Name, values.Description, values.IsActive);
+            var category = _categoryEntityTestFixture.GetValidCategory();
 
             var oldIsActive = category.IsActive;
 
@@ -232,14 +184,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
         public void Update()
         {
             //Arrange
-            var values = new
-            {
-                Name = _categoryEntityTestFixture.GetValidCategoryName(),
-                Description = _categoryEntityTestFixture.GetValidCategoryDescription(),
-                IsActive = true
-            };            
-
-            var category = new CategoryEntity(values.Name, values.Description, values.IsActive);           
+            var category = _categoryEntityTestFixture.GetValidCategory();
 
             var currentValues = new
             {
@@ -262,7 +207,8 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
             category.Description.Should().Be(newValues.Description);
             category.Id.Should().Be(currentValues.Id);
             category.IsActive.Should().Be(currentValues.IsActive);
-            category.CreatedAt.Should().Be(currentValues.CreatedAt);        }
+            category.CreatedAt.Should().Be(currentValues.CreatedAt);
+        }
 
         [Theory(DisplayName = nameof(UpdateErrorWhenAnyParameterIsInvalid))]
         [Trait("Domain", "Category - Aggregates")]
@@ -274,17 +220,10 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
         public void UpdateErrorWhenAnyParameterIsInvalid(string? name)
         {
             //Arrange
-            var values = new
-            {
-                Name = _categoryEntityTestFixture.GetValidCategoryName(),
-                Description = _categoryEntityTestFixture.GetValidCategoryDescription(),
-                IsActive = true
-            };
-
-            var category = new CategoryEntity(values.Name, values.Description, values.IsActive);
+            var category = _categoryEntityTestFixture.GetValidCategory();
 
             //Act
-            var action = () => category.Update(name!, values.Description);
+            var action = () => category.Update(name!, category.Description);
 
             //Assert
             action.Should()

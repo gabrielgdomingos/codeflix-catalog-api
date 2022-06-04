@@ -1,4 +1,4 @@
-﻿namespace FC.CodeFlix.Catalog.Domain.SeedWork
+﻿namespace FC.CodeFlix.Catalog.Domain.Common
 {
     public abstract class AggregateRoot 
         : BaseEntity

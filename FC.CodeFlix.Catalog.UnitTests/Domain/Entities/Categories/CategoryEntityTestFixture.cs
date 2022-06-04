@@ -44,7 +44,5 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
     [CollectionDefinition(nameof(CategoryEntityTestFixture))]
     public class CategoryEntityTestFixtureCollection
         : ICollectionFixture<CategoryEntityTestFixture>
-    {
-
-    }
+    {}
 }

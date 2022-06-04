@@ -1,18 +1,21 @@
-﻿using FC.CodeFlix.Catalog.Domain.Exceptions;
-using FC.CodeFlix.Catalog.Domain.SeedWork;
+﻿using FC.CodeFlix.Catalog.Domain.Common;
+using FC.CodeFlix.Catalog.Domain.Exceptions;
 
 namespace FC.CodeFlix.Catalog.Domain.Entities.Categories
 {
-    public class CategoryEntity 
+    public class CategoryEntity
         : AggregateRoot
     {
         public string Name { get; private set; }
 
-        public string Description { get; private set; }        
+        public string Description { get; private set; }
 
         public bool IsActive { get; private set; }
 
         public DateTime CreatedAt { get; private set; }
+
+        public CategoryEntity(string name, string description)
+            : this(name, description, true) { }
 
         public CategoryEntity(string name, string description, bool isActive)
             : base()
@@ -36,7 +39,7 @@ namespace FC.CodeFlix.Catalog.Domain.Entities.Categories
             if (Name.Length > 255)
                 throw new EntityValidationException($"{nameof(Name)} should be less or equal 255 characters long");
 
-            if (Description == null)
+            if (Description is null)
                 throw new EntityValidationException($"{nameof(Description)} should not be null");
 
             if (Description.Length > 10000)
