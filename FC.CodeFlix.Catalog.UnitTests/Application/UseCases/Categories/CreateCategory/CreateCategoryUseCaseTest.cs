@@ -1,4 +1,8 @@
-﻿using Xunit;
+﻿//using FC.CodeFlix.Catalog.Domain.Entities.Categories;
+//using FC.CodeFlix.Catalog.Domain.Repositories;
+//using Moq;
+//using System.Threading;
+using Xunit;
 
 namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.CreateCategory
 {
@@ -8,7 +12,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.CreateCa
         [Trait("Application", "CreateCategory - Use Cases")]
         public async void CreateCategory()
         {
-            //Arrange
+            ////Arrange
             //var repositoryMock = new Mock<ICategoryRepository>();
 
             //var unitOfWorkMock = new Mock<IUnitOfWork>();
@@ -36,16 +40,16 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.CreateCa
             //output.IsActive.Should().BeTrue();
 
             //repositoryMock.Verify(
-            //    repository => repository.Create(
-            //        It.IsAny<CategoryEntity>,
-            //        It.IsAny<CancellationToken>
+            //    repository => repository.Add(
+            //        It.IsAny<CategoryEntity>(),
+            //        It.IsAny<CancellationToken>()
             //    ),
             //    Times.Once
             //);
 
             //unitOfWorkMock.Verify(
             //    unitOfWork => unitOfWork.Commit(
-            //        It.IsAny<CancellationToken>
+            //        It.IsAny<CancellationToken>()
             //    ),
             //    Times.Once
             //);
