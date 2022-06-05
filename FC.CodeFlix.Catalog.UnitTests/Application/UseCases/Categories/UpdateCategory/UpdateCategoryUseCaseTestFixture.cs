@@ -1,4 +1,5 @@
 ﻿using FC.CodeFlix.Catalog.Application.Common;
+using FC.CodeFlix.Catalog.Application.UseCases.Categories.UpdateCategory;
 using FC.CodeFlix.Catalog.Domain.Entities.Categories;
 using FC.CodeFlix.Catalog.Domain.Repositories;
 using FC.CodeFlix.Catalog.UnitTests.Common;
@@ -53,6 +54,14 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.UpdateCa
 
         public CategoryEntity GetValidCategory()
            => new(
+               GetValidCategoryName(),
+               GetValidCategoryDescription(),
+               GetRandomBoolean()
+           );
+
+        public UpdateCategoryInput GetValidInput()
+           => new(
+               Guid.NewGuid(),
                GetValidCategoryName(),
                GetValidCategoryDescription(),
                GetRandomBoolean()
