@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FC.CodeFlix.Catalog.Domain\FC.CodeFlix.Catalog.Domain.csproj" />
+    <ProjectReference Include="..\FC.CodeFlix.Catalog.Infrastructure.Persistence.EF\FC.CodeFlix.Catalog.Infrastructure.Persistence.EF.csproj" />
   </ItemGroup>
 
 </Project>

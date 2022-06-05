@@ -1,6 +1,7 @@
 ﻿using FC.CodeFlix.Catalog.Domain.Entities.Categories;
+using FC.CodeFlix.Catalog.Infrastructure.Persistence.EF.DbContexts;
 using FC.CodeFlix.Catalog.IntegrationTests.Common;
-//using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Repositories.Categories
@@ -13,14 +14,14 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
     public class CategoryRepositoryTestFixture
         : TestFixtureBase
     {
-        //public CodeFlixCatalogDbContext GetDbContext()
-        //{
-        //    return new CodeFlixCatalogDbContext(
-        //        new DbContextOptionsBuilder<CodeFlixCatalogDbContext>()
-        //        .UseInMemoryDatabase("integration-tests-db")
-        //        .Options
-        //    );
-        //}
+        public CodeFlixCatalogDbContext GetDbContext()
+        {
+            return new CodeFlixCatalogDbContext(
+                new DbContextOptionsBuilder<CodeFlixCatalogDbContext>()
+                .UseInMemoryDatabase("integration-tests-db")
+                .Options
+            );
+        }
 
         public string GetValidCategoryName()
         {
