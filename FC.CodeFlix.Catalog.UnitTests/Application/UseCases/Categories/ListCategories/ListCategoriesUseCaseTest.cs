@@ -17,28 +17,23 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.ListCate
         public ListCategoriesUseCaseTest(ListCategoriesUseCaseTestFixture fixture)
             => _fixture = fixture;
 
-        [Fact(DisplayName = nameof(HandleSuccess))]
+        [Theory(DisplayName = nameof(HandleSuccess))]
         [Trait("Application", "ListCategories - Use Cases")]
-        public async void HandleSuccess()
+        [MemberData(
+            nameof(ListCategoriesUseCaseTestDataGenerator.GetInputsWithoutAllParameters),
+            parameters: 12,
+            MemberType = typeof(ListCategoriesUseCaseTestDataGenerator)
+        )]
+        public async void HandleSuccess(ListCategoriesInput input)
         {
             //Arrange
             var repositoryMock = _fixture.GetRepositoryMock();
 
-            var input = new ListCategoriesInput(
-                page: 2,
-                perPage: 15,
-                search: "search-example",
-                sort: "name",
-                dir: SearchOrderEnum.Asc
-            );
-
-            var categories = _fixture.GetValidCategories();
-
             var searchOutput = new SearchOutput<CategoryEntity>(
                 currentPage: input.Page,
                 perPage: input.PerPage,
-                total: 70,
-                items: categories
+                total: _fixture.Faker.Random.Number(50, 200),
+                items: _fixture.GetValidCategories()
             );
 
             repositoryMock.Setup(
@@ -67,14 +62,14 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.ListCate
             output.Items.Should().HaveCount(searchOutput.Items.Count);
 
             output.Items.ToList().ForEach(otp =>
-                {
-                    var category = searchOutput.Items.First(x => x.Id == otp.Id);
-                    otp.Should().NotBeNull();
-                    otp.Name.Should().Be(category.Name);
-                    otp.Description.Should().Be(category.Description);
-                    otp.CreatedAt.Should().Be(category.CreatedAt);
-                    otp.IsActive.Should().Be(category.IsActive);
-                }
+            {
+                var category = searchOutput.Items.First(x => x.Id == otp.Id);
+                otp.Should().NotBeNull();
+                otp.Name.Should().Be(category.Name);
+                otp.Description.Should().Be(category.Description);
+                otp.CreatedAt.Should().Be(category.CreatedAt);
+                otp.IsActive.Should().Be(category.IsActive);
+            }
             );
 
             repositoryMock.Verify(

@@ -1,4 +1,6 @@
-﻿using FC.CodeFlix.Catalog.Domain.Entities.Categories;
+﻿using FC.CodeFlix.Catalog.Application.UseCases.Categories.ListCategories;
+using FC.CodeFlix.Catalog.Domain.Common.SearchableRepository;
+using FC.CodeFlix.Catalog.Domain.Entities.Categories;
 using FC.CodeFlix.Catalog.Domain.Repositories;
 using FC.CodeFlix.Catalog.UnitTests.Common;
 using Moq;
@@ -63,6 +65,21 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.ListCate
                 categories.Add(GetValidCategory());
 
             return categories;
+        }
+
+        public ListCategoriesInput GetValidInput()
+        {
+            var random = new Random();
+
+            return new ListCategoriesInput(
+                page: random.Next(1, 10),
+                perPage: random.Next(15, 100),
+                search: Faker.Commerce.ProductName(),
+                sort: Faker.Database.Column(),
+                dir: random.Next(0, 10) > 5 ?
+                    SearchOrderEnum.Asc :
+                    SearchOrderEnum.Desc
+            );
         }
     }
 }
