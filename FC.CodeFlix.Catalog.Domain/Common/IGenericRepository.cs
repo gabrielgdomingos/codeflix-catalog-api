@@ -1,7 +1,7 @@
 ﻿namespace FC.CodeFlix.Catalog.Domain.Common
 {
     public interface IGenericRepository<TAggregate>
-        : IRepository
+        : IRepository where TAggregate : AggregateRoot
     {
         public Task AddAsync(TAggregate aggregate, CancellationToken cancellationToken);
 
