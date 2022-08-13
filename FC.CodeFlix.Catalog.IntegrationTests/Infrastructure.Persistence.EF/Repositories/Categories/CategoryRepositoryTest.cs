@@ -1,6 +1,5 @@
 ﻿using FC.CodeFlix.Catalog.Infrastructure.Persistence.EF.Repositories;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Repositories.Categories
@@ -29,7 +28,7 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
 
             await dbContext.SaveChangesAsync();
 
-            var dbCategory = await dbContext.Categories.FirstAsync(x => x.Id == category.Id);
+            var dbCategory = await dbContext.Categories.FindAsync(category.Id);
 
             //Assert
             dbCategory.Should().NotBeNull();
@@ -78,6 +77,8 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
             //Arrange
             var dbContext = _fixture.GetDbContext();
 
+            var categoryId = Guid.NewGuid();
+
             var categories = _fixture.GetValidCategories();
 
             await dbContext.AddRangeAsync(categories);
@@ -86,13 +87,54 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
 
             var repository = new CategoryRepository(dbContext);
 
-            var categoryId = Guid.NewGuid();
-
             //Act
             var dbCategory = await repository.GetAsync(categoryId, CancellationToken.None);
 
             //Assert      
             dbCategory.Should().BeNull();
+        }
+
+        [Fact(DisplayName = nameof(Update))]
+        [Trait("Integration/Infrastructure.Persistence.EF", "CategoryRepository - Repositories")]
+        public async void Update()
+        {
+            //Arrange
+            var dbContext = _fixture.GetDbContext();
+
+            var category = _fixture.GetValidCategory();
+
+            await dbContext.AddAsync(category);
+
+            var categories = _fixture.GetValidCategories();
+
+            await dbContext.AddRangeAsync(categories);
+
+            await dbContext.SaveChangesAsync();
+
+            var newValues = new
+            {
+                Name = _fixture.GetValidCategoryName(),
+                Description = _fixture.GetValidCategoryDescription()
+            };
+
+            category.Update(newValues.Name, newValues.Description);
+
+            var repository = new CategoryRepository(dbContext);
+
+            //Act
+            await repository.UpdateAsync(category, CancellationToken.None);
+
+            await dbContext.SaveChangesAsync();
+
+            var dbCategory = await dbContext.Categories.FindAsync(category.Id);
+
+            //Assert
+            dbCategory.Should().NotBeNull();
+            dbCategory.Id.Should().Be(category.Id);
+            dbCategory.Name.Should().Be(newValues.Name);
+            dbCategory.Description.Should().Be(newValues.Description);
+            dbCategory.CreatedAt.Should().Be(category.CreatedAt);
+            dbCategory.IsActive.Should().Be(category.IsActive);
         }
     }
 }

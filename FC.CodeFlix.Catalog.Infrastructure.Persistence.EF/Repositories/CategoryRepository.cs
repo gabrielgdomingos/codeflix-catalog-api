@@ -32,9 +32,9 @@ namespace FC.CodeFlix.Catalog.Infrastructure.Persistence.EF.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task UpdateAsync(CategoryEntity aggregate, CancellationToken cancellationToken)
+        public Task UpdateAsync(CategoryEntity aggregate, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(_dbContext.Update(aggregate));
         }
     }
 }
