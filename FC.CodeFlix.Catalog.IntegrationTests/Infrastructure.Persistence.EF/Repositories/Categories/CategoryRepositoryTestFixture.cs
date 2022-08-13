@@ -16,6 +16,9 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
     {
         public CodeFlixCatalogDbContext GetDbContext()
         {
+            //Não consegui desasbilitar o Tracking Global do DbContext e por isso
+            //Tive que usar 2 contextos diferentes nos testes
+            //Para garantir que as coisas estavam sendo persistidas
             return new CodeFlixCatalogDbContext(
                 new DbContextOptionsBuilder<CodeFlixCatalogDbContext>()
                 .UseInMemoryDatabase("integration-tests-db")

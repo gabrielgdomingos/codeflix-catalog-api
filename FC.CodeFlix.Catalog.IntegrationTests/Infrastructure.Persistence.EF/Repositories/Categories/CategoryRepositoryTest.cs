@@ -28,7 +28,9 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
 
             await dbContext.SaveChangesAsync();
 
-            var dbCategory = await dbContext.Categories.FindAsync(category.Id);
+            var dbContextDiff = _fixture.GetDbContext();
+
+            var dbCategory = await dbContextDiff.Categories.FindAsync(category.Id);
 
             //Assert
             dbCategory.Should().NotBeNull();
@@ -56,7 +58,9 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
 
             await dbContext.SaveChangesAsync();
 
-            var repository = new CategoryRepository(dbContext);
+            var dbContextDiff = _fixture.GetDbContext();
+
+            var repository = new CategoryRepository(dbContextDiff);
 
             //Act
             var dbCategory = await repository.GetAsync(category.Id, CancellationToken.None);
@@ -85,7 +89,9 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
 
             await dbContext.SaveChangesAsync();
 
-            var repository = new CategoryRepository(dbContext);
+            var dbContextDiff = _fixture.GetDbContext();
+
+            var repository = new CategoryRepository(dbContextDiff);
 
             //Act
             var dbCategory = await repository.GetAsync(categoryId, CancellationToken.None);
@@ -126,7 +132,9 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
 
             await dbContext.SaveChangesAsync();
 
-            var dbCategory = await dbContext.Categories.FindAsync(category.Id);
+            var dbContextDiff = _fixture.GetDbContext();
+
+            var dbCategory = await dbContextDiff.Categories.FindAsync(category.Id);
 
             //Assert
             dbCategory.Should().NotBeNull();
