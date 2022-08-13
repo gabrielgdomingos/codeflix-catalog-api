@@ -22,7 +22,7 @@ namespace FC.CodeFlix.Catalog.Infrastructure.Persistence.EF.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<CategoryEntity> GetAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<CategoryEntity?> GetAsync(Guid id, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
