@@ -55,5 +55,8 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
               GetValidCategoryDescription(),
               GetRandomBoolean()
           );
+
+        public List<CategoryEntity> GetValidCategories(int length = 10)
+         => Enumerable.Range(1, length).Select(_ => GetValidCategory()).ToList();
     }
 }

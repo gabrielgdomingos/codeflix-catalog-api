@@ -24,7 +24,7 @@ namespace FC.CodeFlix.Catalog.Infrastructure.Persistence.EF.Repositories
 
         public async Task<CategoryEntity?> GetAsync(Guid id, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return await _dbContext.Categories.FindAsync(new object[] { id }, cancellationToken);
         }
 
         public async Task<SearchOutput<CategoryEntity>> SearchAsync(SearchInput input, CancellationToken cancellationToken)
