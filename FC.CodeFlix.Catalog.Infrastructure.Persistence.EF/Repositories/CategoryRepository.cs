@@ -2,6 +2,7 @@
 using FC.CodeFlix.Catalog.Domain.Entities.Categories;
 using FC.CodeFlix.Catalog.Domain.Repositories;
 using FC.CodeFlix.Catalog.Infrastructure.Persistence.EF.DbContexts;
+using Microsoft.EntityFrameworkCore;
 
 namespace FC.CodeFlix.Catalog.Infrastructure.Persistence.EF.Repositories
 {
@@ -24,7 +25,9 @@ namespace FC.CodeFlix.Catalog.Infrastructure.Persistence.EF.Repositories
 
         public async Task<CategoryEntity?> GetAsync(Guid id, CancellationToken cancellationToken)
         {
-            return await _dbContext.Categories.FindAsync(new object[] { id }, cancellationToken);
+            return await _dbContext.Categories
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
 
         public async Task<SearchOutput<CategoryEntity>> SearchAsync(SearchInput input, CancellationToken cancellationToken)
