@@ -18,9 +18,9 @@ namespace FC.CodeFlix.Catalog.Infrastructure.Persistence.EF.Repositories
         public async Task AddAsync(CategoryEntity aggregate, CancellationToken cancellationToken)
             => await _dbContext.Categories.AddAsync(aggregate, cancellationToken);
 
-        public async Task DeleteAsync(CategoryEntity aggregate, CancellationToken cancellationToken)
+        public Task DeleteAsync(CategoryEntity aggregate, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(_dbContext.Remove(aggregate));
         }
 
         public async Task<CategoryEntity?> GetAsync(Guid id, CancellationToken cancellationToken)

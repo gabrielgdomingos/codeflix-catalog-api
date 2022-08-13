@@ -144,5 +144,37 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
             dbCategory.CreatedAt.Should().Be(category.CreatedAt);
             dbCategory.IsActive.Should().Be(category.IsActive);
         }
+
+        [Fact(DisplayName = nameof(Delete))]
+        [Trait("Integration/Infrastructure.Persistence.EF", "CategoryRepository - Repositories")]
+        public async void Delete()
+        {
+            //Arrange
+            var dbContext = _fixture.GetDbContext();
+
+            var category = _fixture.GetValidCategory();
+
+            await dbContext.AddAsync(category);
+
+            var categories = _fixture.GetValidCategories(5);
+
+            await dbContext.AddRangeAsync(categories);
+
+            await dbContext.SaveChangesAsync();
+
+            var repository = new CategoryRepository(dbContext);
+
+            //Act
+            await repository.DeleteAsync(category, CancellationToken.None);
+
+            await dbContext.SaveChangesAsync();
+
+            var dbContextDiff = _fixture.GetDbContext();
+
+            var dbCategory = await dbContextDiff.Categories.FindAsync(category.Id);
+
+            //Assert
+            dbCategory.Should().BeNull();
+        }
     }
 }
