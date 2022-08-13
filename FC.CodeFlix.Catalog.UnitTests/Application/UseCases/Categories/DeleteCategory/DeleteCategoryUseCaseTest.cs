@@ -86,7 +86,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.DeleteCa
                     categoryId,
                     It.IsAny<CancellationToken>()
                 )
-            ).ReturnsAsync((CategoryEntity)null!);
+            ).ReturnsAsync((CategoryEntity)null);
 
             var useCase = new DeleteCategoryUseCase(
                 unitOfWorkMock.Object,

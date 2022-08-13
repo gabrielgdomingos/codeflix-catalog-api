@@ -50,7 +50,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.UpdateCa
                 category.Id,
                 _fixture.GetValidCategoryName(),
                 _fixture.GetValidCategoryDescription(),
-                !category.IsActive
+                category.IsActive
             );
 
             //Act
@@ -104,7 +104,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.UpdateCa
                     input.Id,
                     It.IsAny<CancellationToken>()
                 )
-            ).ReturnsAsync((CategoryEntity)null!);
+            ).ReturnsAsync((CategoryEntity)null);
 
             var useCase = new UpdateCategoryUseCase(
                 unitOfWorkMock.Object,

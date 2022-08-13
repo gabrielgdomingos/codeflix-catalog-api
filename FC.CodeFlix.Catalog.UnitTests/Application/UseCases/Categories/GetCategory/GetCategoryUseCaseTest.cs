@@ -71,7 +71,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.GetCateg
                    categoryId,
                    It.IsAny<CancellationToken>()
                )
-           ).ReturnsAsync((CategoryEntity)null!);
+           ).ReturnsAsync((CategoryEntity)null);
 
             var input = new GetCategoryInput(categoryId);
 

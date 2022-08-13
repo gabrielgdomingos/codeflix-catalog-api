@@ -59,13 +59,13 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public void InstantiateErrorWhenNameIsEmpty(string? name)
+        public void InstantiateErrorWhenNameIsEmpty(string name)
         {
             //Arrange
             var values = _categoryEntityTestFixture.GetValidCategory();
 
             //Act
-            var category = () => new CategoryEntity(name!, values.Description, values.IsActive);
+            var category = () => new CategoryEntity(name, values.Description, values.IsActive);
 
             //Assert
             category.Should()
@@ -81,7 +81,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
             var values = _categoryEntityTestFixture.GetValidCategory();
 
             //Act
-            var category = () => new CategoryEntity(values.Name, null!, values.IsActive);
+            var category = () => new CategoryEntity(values.Name, null, values.IsActive);
 
             //Assert
             category.Should()
@@ -217,13 +217,13 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Entities.Categories
         [InlineData(" ")]
         //Teste feito apenas com o parâmetro Name para garantir que
         //o Update() está chamando o Validate() na Entidade.
-        public void UpdateErrorWhenAnyParameterIsInvalid(string? name)
+        public void UpdateErrorWhenAnyParameterIsInvalid(string name)
         {
             //Arrange
             var category = _categoryEntityTestFixture.GetValidCategory();
 
             //Act
-            var action = () => category.Update(name!, category.Description);
+            var action = () => category.Update(name, category.Description);
 
             //Assert
             action.Should()

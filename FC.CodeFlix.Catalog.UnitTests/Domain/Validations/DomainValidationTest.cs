@@ -45,7 +45,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Validations
 
             //Act
             var validation = ()
-                => DomainValidation.NotNull(values.targetName, null!);
+                => DomainValidation.NotNull(values.targetName, null);
 
             //Assert
             validation.Should()
@@ -77,7 +77,7 @@ namespace FC.CodeFlix.Catalog.UnitTests.Domain.Validations
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public void NotNullOrEmptyError(string? value)
+        public void NotNullOrEmptyError(string value)
         {
             //Arrange
             var values = new
