@@ -62,14 +62,14 @@ namespace FC.CodeFlix.Catalog.UnitTests.Application.UseCases.Categories.ListCate
             output.Items.Should().HaveCount(searchOutput.Items.Count);
 
             output.Items.ToList().ForEach(otp =>
-            {
-                var category = searchOutput.Items.First(x => x.Id == otp.Id);
-                otp.Should().NotBeNull();
-                otp.Name.Should().Be(category.Name);
-                otp.Description.Should().Be(category.Description);
-                otp.CreatedAt.Should().Be(category.CreatedAt);
-                otp.IsActive.Should().Be(category.IsActive);
-            }
+                {
+                    var category = searchOutput.Items.First(x => x.Id == otp.Id);
+                    otp.Should().NotBeNull();
+                    otp.Name.Should().Be(category.Name);
+                    otp.Description.Should().Be(category.Description);
+                    otp.CreatedAt.Should().Be(category.CreatedAt);
+                    otp.IsActive.Should().Be(category.IsActive);
+                }
             );
 
             repositoryMock.Verify(

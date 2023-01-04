@@ -32,7 +32,11 @@ namespace FC.CodeFlix.Catalog.Infrastructure.Persistence.EF.Repositories
 
         public async Task<SearchOutput<CategoryEntity>> SearchAsync(SearchInput input, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var total = await _dbContext.Categories.CountAsync();
+
+            var items = await _dbContext.Categories.ToListAsync();
+
+            return new SearchOutput<CategoryEntity>(input.Page, input.PerPage, total, items);
         }
 
         public Task UpdateAsync(CategoryEntity aggregate, CancellationToken cancellationToken)

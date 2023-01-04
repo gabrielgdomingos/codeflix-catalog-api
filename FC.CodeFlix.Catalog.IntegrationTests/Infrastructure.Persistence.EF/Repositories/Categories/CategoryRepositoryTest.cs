@@ -1,4 +1,5 @@
-﻿using FC.CodeFlix.Catalog.Infrastructure.Persistence.EF.Repositories;
+﻿using FC.CodeFlix.Catalog.Domain.Common.SearchableRepository;
+using FC.CodeFlix.Catalog.Infrastructure.Persistence.EF.Repositories;
 using FluentAssertions;
 using Xunit;
 
@@ -175,6 +176,45 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
 
             //Assert
             dbCategory.Should().BeNull();
+        }
+
+        [Fact(DisplayName = nameof(SearchWhenHasItens))]
+        [Trait("Integration/Infrastructure.Persistence.EF", "CategoryRepository - Repositories")]
+        public async void SearchWhenHasItens()
+        {
+            //Arrange
+            var dbContext = _fixture.GetDbContext();
+
+            var categories = _fixture.GetValidCategories(15);
+
+            await dbContext.AddRangeAsync(categories);
+
+            await dbContext.SaveChangesAsync();
+
+            var repository = new CategoryRepository(dbContext);
+
+            var searchInput = new SearchInput(1, 20, "", "", SearchOrderEnum.Asc);
+
+            //Act
+            var searchOutput = await repository.SearchAsync(searchInput, CancellationToken.None);
+
+            //Assert
+            searchOutput.Should().NotBeNull();
+            searchOutput.CurrentPage.Should().Be(searchInput.Page);
+            searchOutput.PerPage.Should().Be(searchInput.PerPage);
+            searchOutput.Total.Should().Be(categories.Count);
+            searchOutput.Items.Should().HaveCount(categories.Count);
+
+            searchOutput.Items.ToList().ForEach(otp =>
+                {
+                    var category = categories.Find(x => x.Id == otp.Id);
+                    otp.Should().NotBeNull();
+                    otp.Name.Should().Be(category.Name);
+                    otp.Description.Should().Be(category.Description);
+                    otp.CreatedAt.Should().Be(category.CreatedAt);
+                    otp.IsActive.Should().Be(category.IsActive);
+                }
+            );
         }
     }
 }
