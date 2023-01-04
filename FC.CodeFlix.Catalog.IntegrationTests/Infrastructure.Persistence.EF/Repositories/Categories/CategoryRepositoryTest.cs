@@ -7,11 +7,20 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
 {
     [Collection(nameof(CategoryRepositoryTestFixture))]
     public class CategoryRepositoryTest
+        : IDisposable
     {
         private readonly CategoryRepositoryTestFixture _fixture;
 
         public CategoryRepositoryTest(CategoryRepositoryTestFixture fixture)
             => _fixture = fixture;
+
+        public void Dispose()
+        {
+            //Necessário implementar IDisposable que é chamado após a execução de cada teste
+            //Os dados inseridos num teste estavam atrapalhando na execução do outro
+            //Além disso foi necessário adicionar o arquivo xunit.runner.json para desabilitar o paralelismo
+            _fixture.CleanInMemoryDatabase();
+        }
 
         [Fact(DisplayName = nameof(Add))]
         [Trait("Integration/Infrastructure.Persistence.EF", "CategoryRepository - Repositories")]

@@ -26,6 +26,11 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
             );
         }
 
+        public void CleanInMemoryDatabase()
+        {
+            GetDbContext().Database.EnsureDeleted();
+        }
+
         public string GetValidCategoryName()
         {
             var name = "ab";
