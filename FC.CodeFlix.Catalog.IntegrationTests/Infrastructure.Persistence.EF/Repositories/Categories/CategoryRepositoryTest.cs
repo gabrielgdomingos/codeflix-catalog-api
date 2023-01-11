@@ -187,9 +187,9 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
             dbCategory.Should().BeNull();
         }
 
-        [Fact(DisplayName = nameof(SearchWhenHasItens))]
+        [Fact(DisplayName = nameof(Search))]
         [Trait("Integration/Infrastructure.Persistence.EF", "CategoryRepository - Repositories")]
-        public async void SearchWhenHasItens()
+        public async void Search()
         {
             //Arrange
             var dbContext = _fixture.GetDbContext();
@@ -224,6 +224,28 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
                     otp.IsActive.Should().Be(category.IsActive);
                 }
             );
+        }
+
+        [Fact(DisplayName = nameof(SearchEmpty))]
+        [Trait("Integration/Infrastructure.Persistence.EF", "CategoryRepository - Repositories")]
+        public async void SearchEmpty()
+        {
+            //Arrange
+            var dbContext = _fixture.GetDbContext();
+
+            var repository = new CategoryRepository(dbContext);
+
+            var searchInput = new SearchInput(1, 20, "", "", SearchOrderEnum.Asc);
+
+            //Act
+            var searchOutput = await repository.SearchAsync(searchInput, CancellationToken.None);
+
+            //Assert
+            searchOutput.Should().NotBeNull();
+            searchOutput.CurrentPage.Should().Be(searchInput.Page);
+            searchOutput.PerPage.Should().Be(searchInput.PerPage);
+            searchOutput.Total.Should().Be(0);
+            searchOutput.Items.Should().HaveCount(0);
         }
     }
 }
