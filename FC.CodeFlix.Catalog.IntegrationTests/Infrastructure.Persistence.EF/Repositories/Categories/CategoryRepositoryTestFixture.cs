@@ -65,6 +65,15 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
           );
 
         public List<CategoryEntity> GetValidCategories(int length = 10)
-         => Enumerable.Range(1, length).Select(_ => GetValidCategory()).ToList();
+         => Enumerable.Range(1, length)
+            .Select(_ => GetValidCategory()).ToList();
+
+        public List<CategoryEntity> GetValidNamedCategories(List<string> names)
+         => names.Select(name =>
+         {
+             var category = GetValidCategory();
+             category.UpdateName(name);
+             return category;
+         }).ToList();
     }
 }

@@ -255,16 +255,16 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
         [InlineData(7, 3, 5, 0)]
         public async void SearchPaginated
         (
-            int numberOfCategoriesGenerated,
+            int quantityCategoriesToGenerated,
             int currentPage,
-            int numberOfItemsPerPage,
-            int numberOfExpectedItems
+            int itemsPerPage,
+            int expectedQuantityReturnedItems
         )
         {
             //Arrange
             var dbContext = _fixture.GetDbContext();
 
-            var categories = _fixture.GetValidCategories(numberOfCategoriesGenerated);
+            var categories = _fixture.GetValidCategories(quantityCategoriesToGenerated);
 
             await dbContext.AddRangeAsync(categories);
 
@@ -272,7 +272,7 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
 
             var repository = new CategoryRepository(dbContext);
 
-            var searchInput = new SearchInput(currentPage, numberOfItemsPerPage, "", "", SearchOrderEnum.Asc);
+            var searchInput = new SearchInput(currentPage, itemsPerPage, "", "", SearchOrderEnum.Asc);
 
             //Act
             var searchOutput = await repository.SearchAsync(searchInput, CancellationToken.None);
@@ -282,7 +282,73 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
             searchOutput.CurrentPage.Should().Be(searchInput.Page);
             searchOutput.PerPage.Should().Be(searchInput.PerPage);
             searchOutput.Total.Should().Be(categories.Count);
-            searchOutput.Items.Should().HaveCount(numberOfExpectedItems);
+            searchOutput.Items.Should().HaveCount(expectedQuantityReturnedItems);
+
+            foreach (var item in searchOutput.Items.ToList())
+            {
+                var category = categories.Find(x => x.Id == item.Id);
+                item.Should().NotBeNull();
+                item.Name.Should().Be(category.Name);
+                item.Description.Should().Be(category.Description);
+                item.CreatedAt.Should().Be(category.CreatedAt);
+                item.IsActive.Should().Be(category.IsActive);
+            }
+        }
+
+        [Theory(DisplayName = nameof(SearchByText))]
+        [Trait("Integration/Infrastructure.Persistence.EF", "CategoryRepository - Repositories")]
+        [InlineData("Action", 1, 5, 1, 1)]
+        [InlineData("Horror", 1, 5, 2, 2)]
+        [InlineData("Horror", 2, 5, 0, 2)]
+        [InlineData("Sci-Fi", 1, 5, 4, 4)]
+        [InlineData("Sci-Fi", 1, 2, 2, 4)]
+        [InlineData("Sci-Fi", 2, 3, 1, 4)]
+        [InlineData("Comedy", 1, 3, 0, 0)]
+        [InlineData("Real Facts", 1, 5, 2, 2)]
+        public async void SearchByText
+        (
+            string search,
+            int currentPage,
+            int itemsPerPage,
+            int expectedQuantityReturnedItems,
+            int expectedQuantityTotalItems
+        )
+        {
+            //Arrange
+            var dbContext = _fixture.GetDbContext();
+
+            var names = new List<string>()
+            {
+                "Action",
+                "Horror",
+                "Horror - Based on Real Facts",
+                "Drama",
+                "Sci-Fi IA",
+                "Sci-Fi Space",
+                "Sci-Fi Robots",
+                "Sci-Fi Future",
+                "Romance - Based on Real Facts"
+            };
+
+            var categories = _fixture.GetValidNamedCategories(names);
+
+            await dbContext.AddRangeAsync(categories);
+
+            await dbContext.SaveChangesAsync();
+
+            var repository = new CategoryRepository(dbContext);
+
+            var searchInput = new SearchInput(currentPage, itemsPerPage, search, "", SearchOrderEnum.Asc);
+
+            //Act
+            var searchOutput = await repository.SearchAsync(searchInput, CancellationToken.None);
+
+            //Assert
+            searchOutput.Should().NotBeNull();
+            searchOutput.CurrentPage.Should().Be(searchInput.Page);
+            searchOutput.PerPage.Should().Be(searchInput.PerPage);
+            searchOutput.Total.Should().Be(expectedQuantityTotalItems);
+            searchOutput.Items.Should().HaveCount(expectedQuantityReturnedItems);
 
             foreach (var item in searchOutput.Items.ToList())
             {

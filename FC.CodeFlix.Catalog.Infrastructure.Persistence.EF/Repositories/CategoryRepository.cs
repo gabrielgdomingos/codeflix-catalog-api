@@ -9,45 +9,45 @@ namespace FC.CodeFlix.Catalog.Infrastructure.Persistence.EF.Repositories
     public class CategoryRepository
         : ICategoryRepository
     {
-
         private readonly CodeFlixCatalogDbContext _dbContext;
+
+        private DbSet<CategoryEntity> _categories
+            => _dbContext.Categories;
 
         public CategoryRepository(CodeFlixCatalogDbContext dbContext)
             => _dbContext = dbContext;
 
         public async Task AddAsync(CategoryEntity aggregate, CancellationToken cancellationToken)
-            => await _dbContext.Categories.AddAsync(aggregate, cancellationToken);
+            => await _categories.AddAsync(aggregate, cancellationToken);
 
         public Task DeleteAsync(CategoryEntity aggregate, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(_dbContext.Remove(aggregate));
-        }
+            => Task.FromResult(_categories.Remove(aggregate));
 
         public async Task<CategoryEntity?> GetAsync(Guid id, CancellationToken cancellationToken)
-        {
-            return await _dbContext.Categories
+            => await _categories
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-        }
+
+        public Task UpdateAsync(CategoryEntity aggregate, CancellationToken cancellationToken)
+            => Task.FromResult(_categories.Update(aggregate));
 
         public async Task<SearchOutput<CategoryEntity>> SearchAsync(SearchInput input, CancellationToken cancellationToken)
         {
-            var total = await _dbContext.Categories.CountAsync();
-
             var skip = (input.Page - 1) * input.PerPage;
 
-            var items = await _dbContext.Categories
-                .AsNoTracking()
+            var queryable = _categories.AsNoTracking();
+
+            if (!string.IsNullOrEmpty(input.Search))
+                queryable = queryable.Where(x => x.Name.Contains(input.Search));
+
+            var total = await queryable.CountAsync();
+
+            var items = await queryable
                 .Skip(skip)
                 .Take(input.PerPage)
                 .ToListAsync();
 
             return new SearchOutput<CategoryEntity>(input.Page, input.PerPage, total, items);
-        }
-
-        public Task UpdateAsync(CategoryEntity aggregate, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(_dbContext.Update(aggregate));
         }
     }
 }

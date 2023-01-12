@@ -52,7 +52,18 @@ namespace FC.CodeFlix.Catalog.Domain.Entities.Categories
 
         public void Update(string name, string description)
         {
+            UpdateName(name);
+            UpdateDescription(description);
+        }
+
+        public void UpdateName(string name)
+        {
             Name = name;
+            validate();
+        }
+
+        public void UpdateDescription(string description)
+        {
             Description = description;
             validate();
         }
