@@ -214,16 +214,15 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
             searchOutput.Total.Should().Be(categories.Count);
             searchOutput.Items.Should().HaveCount(categories.Count);
 
-            searchOutput.Items.ToList().ForEach(otp =>
-                {
-                    var category = categories.Find(x => x.Id == otp.Id);
-                    otp.Should().NotBeNull();
-                    otp.Name.Should().Be(category.Name);
-                    otp.Description.Should().Be(category.Description);
-                    otp.CreatedAt.Should().Be(category.CreatedAt);
-                    otp.IsActive.Should().Be(category.IsActive);
-                }
-            );
+            foreach (var item in searchOutput.Items)
+            {
+                var category = categories.Find(x => x.Id == item.Id);
+                item.Should().NotBeNull();
+                item.Name.Should().Be(category.Name);
+                item.Description.Should().Be(category.Description);
+                item.CreatedAt.Should().Be(category.CreatedAt);
+                item.IsActive.Should().Be(category.IsActive);
+            }
         }
 
         [Fact(DisplayName = nameof(SearchEmpty))]
@@ -246,6 +245,54 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
             searchOutput.PerPage.Should().Be(searchInput.PerPage);
             searchOutput.Total.Should().Be(0);
             searchOutput.Items.Should().HaveCount(0);
+        }
+
+        [Theory(DisplayName = nameof(SearchPaginated))]
+        [Trait("Integration/Infrastructure.Persistence.EF", "CategoryRepository - Repositories")]
+        [InlineData(10, 1, 5, 5)]
+        [InlineData(10, 2, 5, 5)]
+        [InlineData(7, 2, 5, 2)]
+        [InlineData(7, 3, 5, 0)]
+        public async void SearchPaginated
+        (
+            int numberOfCategoriesGenerated,
+            int currentPage,
+            int numberOfItemsPerPage,
+            int numberOfExpectedItems
+        )
+        {
+            //Arrange
+            var dbContext = _fixture.GetDbContext();
+
+            var categories = _fixture.GetValidCategories(numberOfCategoriesGenerated);
+
+            await dbContext.AddRangeAsync(categories);
+
+            await dbContext.SaveChangesAsync();
+
+            var repository = new CategoryRepository(dbContext);
+
+            var searchInput = new SearchInput(currentPage, numberOfItemsPerPage, "", "", SearchOrderEnum.Asc);
+
+            //Act
+            var searchOutput = await repository.SearchAsync(searchInput, CancellationToken.None);
+
+            //Assert
+            searchOutput.Should().NotBeNull();
+            searchOutput.CurrentPage.Should().Be(searchInput.Page);
+            searchOutput.PerPage.Should().Be(searchInput.PerPage);
+            searchOutput.Total.Should().Be(categories.Count);
+            searchOutput.Items.Should().HaveCount(numberOfExpectedItems);
+
+            foreach (var item in searchOutput.Items.ToList())
+            {
+                var category = categories.Find(x => x.Id == item.Id);
+                item.Should().NotBeNull();
+                item.Name.Should().Be(category.Name);
+                item.Description.Should().Be(category.Description);
+                item.CreatedAt.Should().Be(category.CreatedAt);
+                item.IsActive.Should().Be(category.IsActive);
+            }
         }
     }
 }

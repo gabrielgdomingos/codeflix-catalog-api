@@ -34,7 +34,13 @@ namespace FC.CodeFlix.Catalog.Infrastructure.Persistence.EF.Repositories
         {
             var total = await _dbContext.Categories.CountAsync();
 
-            var items = await _dbContext.Categories.ToListAsync();
+            var skip = (input.Page - 1) * input.PerPage;
+
+            var items = await _dbContext.Categories
+                .AsNoTracking()
+                .Skip(skip)
+                .Take(input.PerPage)
+                .ToListAsync();
 
             return new SearchOutput<CategoryEntity>(input.Page, input.PerPage, total, items);
         }
