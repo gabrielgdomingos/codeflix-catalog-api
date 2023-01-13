@@ -214,14 +214,14 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
             searchOutput.Total.Should().Be(categories.Count);
             searchOutput.Items.Should().HaveCount(categories.Count);
 
-            foreach (var item in searchOutput.Items)
+            foreach (var category in searchOutput.Items)
             {
-                var category = categories.Find(x => x.Id == item.Id);
-                item.Should().NotBeNull();
-                item.Name.Should().Be(category.Name);
-                item.Description.Should().Be(category.Description);
-                item.CreatedAt.Should().Be(category.CreatedAt);
-                item.IsActive.Should().Be(category.IsActive);
+                var expected = categories.Find(x => x.Id == category.Id);
+                category.Should().NotBeNull();
+                category.Name.Should().Be(expected.Name);
+                category.Description.Should().Be(expected.Description);
+                category.CreatedAt.Should().Be(expected.CreatedAt);
+                category.IsActive.Should().Be(expected.IsActive);
             }
         }
 
@@ -284,18 +284,18 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
             searchOutput.Total.Should().Be(categories.Count);
             searchOutput.Items.Should().HaveCount(expectedQuantityReturnedItems);
 
-            foreach (var item in searchOutput.Items.ToList())
+            foreach (var category in searchOutput.Items.ToList())
             {
-                var category = categories.Find(x => x.Id == item.Id);
-                item.Should().NotBeNull();
-                item.Name.Should().Be(category.Name);
-                item.Description.Should().Be(category.Description);
-                item.CreatedAt.Should().Be(category.CreatedAt);
-                item.IsActive.Should().Be(category.IsActive);
+                var expected = categories.Find(x => x.Id == category.Id);
+                category.Should().NotBeNull();
+                category.Name.Should().Be(expected.Name);
+                category.Description.Should().Be(expected.Description);
+                category.CreatedAt.Should().Be(expected.CreatedAt);
+                category.IsActive.Should().Be(expected.IsActive);
             }
         }
 
-        [Theory(DisplayName = nameof(SearchByText))]
+        [Theory(DisplayName = nameof(SearchText))]
         [Trait("Integration/Infrastructure.Persistence.EF", "CategoryRepository - Repositories")]
         [InlineData("Action", 1, 5, 1, 1)]
         [InlineData("Horror", 1, 5, 2, 2)]
@@ -305,7 +305,7 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
         [InlineData("Sci-Fi", 2, 3, 1, 4)]
         [InlineData("Comedy", 1, 3, 0, 0)]
         [InlineData("Real Facts", 1, 5, 2, 2)]
-        public async void SearchByText
+        public async void SearchText
         (
             string search,
             int currentPage,
@@ -350,14 +350,68 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
             searchOutput.Total.Should().Be(expectedQuantityTotalItems);
             searchOutput.Items.Should().HaveCount(expectedQuantityReturnedItems);
 
-            foreach (var item in searchOutput.Items.ToList())
+            foreach (var category in searchOutput.Items.ToList())
             {
-                var category = categories.Find(x => x.Id == item.Id);
-                item.Should().NotBeNull();
-                item.Name.Should().Be(category.Name);
-                item.Description.Should().Be(category.Description);
-                item.CreatedAt.Should().Be(category.CreatedAt);
-                item.IsActive.Should().Be(category.IsActive);
+                var expected = categories.Find(x => x.Id == category.Id);
+                category.Should().NotBeNull();
+                category.Name.Should().Be(expected.Name);
+                category.Description.Should().Be(expected.Description);
+                category.CreatedAt.Should().Be(expected.CreatedAt);
+                category.IsActive.Should().Be(expected.IsActive);
+            }
+        }
+
+        [Theory(DisplayName = nameof(SearchOrdered))]
+        [Trait("Integration/Infrastructure.Persistence.EF", "CategoryRepository - Repositories")]
+        [InlineData("Id", SearchOrderEnum.Asc)]
+        [InlineData("Id", SearchOrderEnum.Desc)]
+        [InlineData("Name", SearchOrderEnum.Asc)]
+        [InlineData("Name", SearchOrderEnum.Desc)]
+        [InlineData("CreatedAt", SearchOrderEnum.Asc)]
+        [InlineData("CreatedAt", SearchOrderEnum.Desc)]
+        public async void SearchOrdered
+        (
+            string orderBy,
+            SearchOrderEnum sortOrder
+        )
+        {
+            //Arrange
+            var dbContext = _fixture.GetDbContext();
+
+            var categories = _fixture.GetValidCategories(10);
+
+            await dbContext.AddRangeAsync(categories);
+
+            await dbContext.SaveChangesAsync();
+
+            var repository = new CategoryRepository(dbContext);
+
+            var searchInput = new SearchInput(1, 10, "", orderBy, sortOrder);
+
+            //Act
+            var searchOutput = await repository.SearchAsync(searchInput, CancellationToken.None);
+
+            //Assert
+            searchOutput.Should().NotBeNull();
+            searchOutput.CurrentPage.Should().Be(searchInput.Page);
+            searchOutput.PerPage.Should().Be(searchInput.PerPage);
+            searchOutput.Total.Should().Be(categories.Count);
+            searchOutput.Items.Should().HaveCount(categories.Count);
+
+            var index = 0;
+
+            var sorted = _fixture.SortCategories(categories, orderBy, sortOrder);
+
+            foreach (var expected in sorted)
+            {
+                var category = searchOutput.Items[index];
+                category.Should().NotBeNull();
+                category.Id.Should().Be(expected.Id);
+                category.Name.Should().Be(expected.Name);
+                category.Description.Should().Be(expected.Description);
+                category.CreatedAt.Should().Be(expected.CreatedAt);
+                category.IsActive.Should().Be(expected.IsActive);
+                index++;
             }
         }
     }

@@ -40,6 +40,9 @@ namespace FC.CodeFlix.Catalog.Infrastructure.Persistence.EF.Repositories
             if (!string.IsNullOrEmpty(input.Search))
                 queryable = queryable.Where(x => x.Name.Contains(input.Search));
 
+            if (!string.IsNullOrEmpty(input.OrderBy))
+                queryable = AddOrderToQueryable(queryable, input.OrderBy, input.Order);
+
             var total = await queryable.CountAsync();
 
             var items = await queryable
@@ -47,7 +50,25 @@ namespace FC.CodeFlix.Catalog.Infrastructure.Persistence.EF.Repositories
                 .Take(input.PerPage)
                 .ToListAsync();
 
-            return new SearchOutput<CategoryEntity>(input.Page, input.PerPage, total, items);
+            return new SearchOutput<CategoryEntity>(
+                input.Page,
+                input.PerPage,
+                total,
+                items);
+        }
+
+        private IQueryable<CategoryEntity> AddOrderToQueryable(IQueryable<CategoryEntity> queryable, string orderBy, SearchOrderEnum sortOrder)
+        {
+            return (orderBy.ToLower(), sortOrder) switch
+            {
+                ("id", SearchOrderEnum.Asc) => queryable.OrderBy(x => x.Id),
+                ("id", SearchOrderEnum.Desc) => queryable.OrderByDescending(x => x.Id),
+                ("name", SearchOrderEnum.Asc) => queryable.OrderBy(x => x.Name),
+                ("name", SearchOrderEnum.Desc) => queryable.OrderByDescending(x => x.Name),
+                ("createdat", SearchOrderEnum.Asc) => queryable.OrderBy(x => x.Name),
+                ("createdat", SearchOrderEnum.Desc) => queryable.OrderByDescending(x => x.Name),
+                _ => queryable
+            };
         }
     }
 }

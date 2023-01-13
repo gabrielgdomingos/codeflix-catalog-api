@@ -1,4 +1,5 @@
-﻿using FC.CodeFlix.Catalog.Domain.Entities.Categories;
+﻿using FC.CodeFlix.Catalog.Domain.Common.SearchableRepository;
+using FC.CodeFlix.Catalog.Domain.Entities.Categories;
 using FC.CodeFlix.Catalog.Infrastructure.Persistence.EF.DbContexts;
 using FC.CodeFlix.Catalog.IntegrationTests.Common;
 using Microsoft.EntityFrameworkCore;
@@ -75,5 +76,21 @@ namespace FC.CodeFlix.Catalog.IntegrationTests.Infrastructure.Persistence.EF.Rep
              category.UpdateName(name);
              return category;
          }).ToList();
+
+        public List<CategoryEntity> SortCategories(IEnumerable<CategoryEntity> categories, string orderBy, SearchOrderEnum sortOrder)
+        {
+            var sorted = (orderBy.ToLower(), sortOrder) switch
+            {
+                ("id", SearchOrderEnum.Asc) => categories.OrderBy(x => x.Id),
+                ("id", SearchOrderEnum.Desc) => categories.OrderByDescending(x => x.Id),
+                ("name", SearchOrderEnum.Asc) => categories.OrderBy(x => x.Name),
+                ("name", SearchOrderEnum.Desc) => categories.OrderByDescending(x => x.Name),
+                ("createdat", SearchOrderEnum.Asc) => categories.OrderBy(x => x.Name),
+                ("createdat", SearchOrderEnum.Desc) => categories.OrderByDescending(x => x.Name),
+                _ => categories
+            };
+
+            return sorted.ToList();
+        }
     }
 }
